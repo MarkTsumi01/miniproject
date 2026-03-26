@@ -1,14 +1,19 @@
 <?php
 
-$serverName = '';
-$userName = '';
-$passWord = '';
-$databaseName = '';
+$serverName = 'mysql';
+$userName = 'root';
+$password = 'root';
+$databaseName = 'mini';
+
+// $serverName = $_ENV['SERVER_NAME'];
+// $userName = $_ENV['USER_NAME'];
+// $password = $_ENV['PASSWORD'];
+// $databaseName = $_ENV['DATABASE_NAME'];
 
 $connectDatabase = mysqli_connect(
     $serverName, 
-    $userName, 
-    $passWord, 
+    $userName,
+    $password,
     $databaseName
 );
 
