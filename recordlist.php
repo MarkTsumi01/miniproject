@@ -7,6 +7,17 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+function logOut() {
+    session_destroy();
+    header('Location: login.php');
+    exit();
+}
+
+if (isset($_POST['logout'])) {
+    logOut();
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -18,5 +29,8 @@ if (!isset($_SESSION['user_id'])) {
 </head>
 <body>
     <h1>Record List</h1>
+    <form method='post'>
+        <input type='submit' value='Logout' name='logout'>
+    </form>
 </body>
 </html>
