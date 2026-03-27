@@ -5,7 +5,7 @@ session_start();
 include 'connectdatabase.php';
 
 if (isset($_SESSION['user_id'])) {
-    header('Location: record_list.php');
+    header('Location: recordlist.php');
     exit();
 }
 
