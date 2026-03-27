@@ -5,7 +5,7 @@ session_start();
 include 'connectdatabase.php';
 
 if (isset($_SESSION['user_id'])) {
-    header('Location: ../views/record_list.php');
+    header('Location: recordlist.php');
     exit();
 }
 
@@ -24,7 +24,7 @@ if (isset($_POST['submit'])) {
     }
 
     if (empty($errorList)) {
-        $selectUserStmt = $connectDatabase->prepare('SELECT id, password FROM userdata WHERE username = ?');
+        $selectUserStmt = $connectDatabase->prepare('SELECT id, password FROM users WHERE username = ?');
         $selectUserStmt->bind_param('s', $userName);
         $selectUserStmt->execute();
         $selectUserStmt->store_result();
@@ -39,7 +39,7 @@ if (isset($_POST['submit'])) {
 
             $selectUserStmt->close();
 
-            header('Location: ../views/record_list.php');
+            header('Location: recordlist.php');
             exit();
         }
 

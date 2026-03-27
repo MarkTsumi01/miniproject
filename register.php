@@ -5,7 +5,7 @@ session_start();
 include 'connectdatabase.php';
 
 if (isset($_SESSION['user_id'])) {
-    header('Location: ../views/record_list.php');
+    header('Location: record_list.php');
     exit();
 }
 
@@ -23,12 +23,8 @@ if (isset($_POST['submit'])) {
         $errorList['password'] = 'Password is required';
     } 
     
-    // elseif (strlen($password) < 8) {
-    //     $errorList['password'] = 'Password must be at least 8 characters long';
-    // }
-
     if (empty($errorList)) {
-        $checkUsernameStmt = $connectDatabase->prepare('SELECT id FROM userdata WHERE username = ?');
+        $checkUsernameStmt = $connectDatabase->prepare('SELECT id FROM users WHERE username = ?');
         $checkUsernameStmt->bind_param('s', $userName);
         $checkUsernameStmt->execute();
         $checkUsernameStmt->store_result();
@@ -38,7 +34,7 @@ if (isset($_POST['submit'])) {
         } else {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-            $insertStmt = $connectDatabase->prepare('INSERT INTO userdata (username, password) VALUES (?, ?)');
+            $insertStmt = $connectDatabase->prepare('INSERT INTO users (username, password) VALUES (?, ?)');
             $insertStmt->bind_param('ss', $userName, $hashedPassword);
             $insertStmt->execute();
             $insertStmt->close();
@@ -51,7 +47,7 @@ if (isset($_POST['submit'])) {
     }
 
     if (empty($errorList)) {
-        header('Location: ../views/record_list.php');
+        header('Location: recordlist.php');
         exit();
     }
 }
@@ -72,11 +68,9 @@ if (isset($_POST['submit'])) {
             <label for='username'>Username:</label>
             <input type='text' id='username' name='username'><br>
             <?php if (!empty($errorList['username'])) { echo '<p>' . htmlspecialchars($errorList['username']) . '</p>'; } ?>
-
             <label for='password'>Password:</label>
             <input type='password' id='password' name='password'><br>
             <?php if (!empty($errorList['password'])) { echo '<p>' . htmlspecialchars($errorList['password']) . '</p>'; } ?>
-
             <input type='submit' value='Register' name='submit'>
         </form>
     </div>
