@@ -2,21 +2,38 @@
 
 session_start();
 
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Expires: 0');
+header('Pragma: no-cache');
+
 if (!isset($_SESSION['user_id'])) {
+    session_write_close();
     header('Location: login.php');
+
     exit();
 }
 
-function logOut() {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $_SESSION = [];
+
+    $cookieParams = session_get_cookie_params();
+    setcookie(
+        session_name(),
+        '',
+        time() - 3600,
+        $cookieParams['path'],
+        $cookieParams['domain'],
+        $cookieParams['secure'],
+        $cookieParams['httponly']
+    );
+
     session_destroy();
     header('Location: login.php');
+
     exit();
 }
 
-if (isset($_POST['logout'])) {
-    logOut();
-}
-
+session_write_close();
 
 ?>
 

@@ -2,18 +2,23 @@
 
 session_start();
 
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
+
 include 'connectdatabase.php';
 
 if (isset($_SESSION['user_id'])) {
     header('Location: recordlist.php');
+
     exit();
 }
 
 $errorList = [];
 
-if (isset($_POST['submit'])) {
-    $userName = $_POST['username'];
-    $password = $_POST['password'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $userName = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
 
     if (empty($userName)) {
         $errorList['username'] = 'Username is required';
@@ -34,12 +39,12 @@ if (isset($_POST['submit'])) {
         if ($selectUserStmt->num_rows === 0 || !password_verify($password, $hashedPassword)) {
             $errorList['credentials'] = 'Invalid username or password';
         } else {
+            session_regenerate_id(true);
             $_SESSION['user_id'] = $userId;
             $_SESSION['username'] = $userName;
-
-            $selectUserStmt->close();
-
+            session_write_close();
             header('Location: recordlist.php');
+
             exit();
         }
 
@@ -55,6 +60,13 @@ if (isset($_POST['submit'])) {
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>Login</title>
+    <script>
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                window.location.replace('recordlist.php');
+            }
+        });
+    </script>
 </head>
 <body>
     <h1>Login</h1>
@@ -62,11 +74,17 @@ if (isset($_POST['submit'])) {
         <form method='post'>
             <label for='username'>Username:</label>
             <input type='text' id='username' name='username' value='<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>'><br>
-            <?php if (!empty($errorList['username'])) { echo '<p>' . htmlspecialchars($errorList['username']) . '</p>'; } ?>
+            <?php if (!empty($errorList['username'])) {
+                echo '<p>' . htmlspecialchars($errorList['username']) . '</p>';
+            } ?>
             <label for='password'>Password:</label>
-            <input type='password' id='password' name='password' value='<?php echo isset($_POST['password']) ? htmlspecialchars($_POST['password']) : ''; ?>'><br>
-            <?php if (!empty($errorList['password'])) { echo '<p>' . htmlspecialchars($errorList['password']) . '</p>'; } ?>
-            <?php if (!empty($errorList['credentials'])) { echo '<p>' . htmlspecialchars($errorList['credentials']) . '</p>'; } ?>
+            <input type='password' id='password' name='password'><br>
+            <?php if (!empty($errorList['password'])) {
+                echo '<p>' . htmlspecialchars($errorList['password']) . '</p>';
+            } ?>
+            <?php if (!empty($errorList['credentials'])) {
+                echo '<p>' . htmlspecialchars($errorList['credentials']) . '</p>';
+            } ?>
             <input type='submit' value='Login' name='submit'>
         </form>
     </div>
