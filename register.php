@@ -2,9 +2,9 @@
 
 session_start();
 
-header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-header('Expires: 0');
-header('Pragma: no-cache');
+// header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+// header('Expires: 0');
+// header('Pragma: no-cache');
 
 include 'connectdatabase.php';
 
@@ -58,6 +58,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
     }
+    
+    if($_POST['login']) {
+        header('Location: login.php');
+        
+        exit();
+    }
 }
 
 ?>
@@ -69,9 +75,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>Register</title>
     <script>
+        // window.addEventListener('pageshow', function(event) {
+        //     if (event.persisted) {
+        //         window.location.replace('recordlist.php');
+        //     }
+        // });
         window.addEventListener('pageshow', function(event) {
             if (event.persisted) {
-                window.location.replace('recordlist.php');
+                window.location.reload();
             }
         });
     </script>
@@ -91,6 +102,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo '<p>' . htmlspecialchars($errorList['password']) . '</p>';
             } ?>
             <input type='submit' value='Register' name='submit'>
+        </form>
+        <form method='post'>
+            <input type='submit' value='Login' name='login'>
         </form>
     </div>
 </body>
